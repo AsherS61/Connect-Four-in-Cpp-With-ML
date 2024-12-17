@@ -1,6 +1,6 @@
 # Connect-Four-in-C-With-Ai-Algorithm
 
-#### Usage : 
+#### Usage : Run the Program and Enter 1 to play against an AI or Enter 2 to play against another person.
 
 #### Description: This is a program that simulates the game Connect-Four. It uses C++ langauge to create a command-line program. It allows for 2 options for the user to choose when starting. They can either go single-player or multi-player. If they decide to do singleplayer, they will fight an Ai that uses the minimax algorithm. Otherwise, it will switch between asking player 1's and player 2's moves.
 
