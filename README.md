@@ -1,4 +1,4 @@
-# Connect-Four-in-C-With-Ai-Algorithm
+# Connect-Four-in-C-With-ML
 
 #### Usage : Run the Program and Enter 1 to play against an AI or Enter 2 to play against another person.
 
