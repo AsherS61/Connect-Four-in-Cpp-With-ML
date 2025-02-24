@@ -59,7 +59,12 @@ function checkWinner(row, col) {
       checkDirection(row, col, 1, 1) || // Diagonal \
       checkDirection(row, col, 1, -1)) { // Diagonal /
     gameOver = true;
-    setTimeout(() => alert(`${currentPlayer === 'x' ? 'Player 1' : 'AI'} wins!`), 100);
+    setTimeout(() => {
+      alert(`${currentPlayer === 'x' ? 'Player 1' : 'AI'} wins!`);
+      document.getElementById('restart-btn').style.display = 'block';
+      document.getElementById('title-btn').style.display = 'block';
+    }, 100);
+
   }
 }
 
@@ -107,4 +112,9 @@ function updateTurnStatus() {
 
 function restartGame() {
   startGame(gameMode);
+}
+
+function returnTitle() {
+  document.getElementById('mode-selection').style.display = 'block';
+  document.getElementById('game-board').style.display = 'none';
 }
