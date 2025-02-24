@@ -1,112 +1,145 @@
-let board;
-let currentPlayer;
-let gameMode;
+let currentPlayer = 'X';
+let gameBoard = Array(6).fill().map(() => Array(7).fill(''));
 let gameOver = false;
 
-function startGame(mode) {
-  gameMode = mode;
-  currentPlayer = 'x'; // Player 1 starts (red)
-  board = Array(6).fill().map(() => Array(7).fill(null)); // 6x7 board
-  gameOver = false;
-  
-  document.getElementById('mode-selection').style.display = 'none';
-  document.getElementById('game-board').style.display = 'block';
-  
-  renderBoard();
-  updateTurnStatus();
-}
+const titleScreen = document.getElementById('titleScreen');
+const gameScreen = document.getElementById('gameScreen');
+const board = document.getElementById('board');
+const currentPlayerDisplay = document.getElementById('currentPlayer');
+const status = document.getElementById('status');
+const retryButton = document.getElementById('retryButton');
+const goToTitleButton = document.getElementById('goToTitleButton');
+const singleplayerButton = document.getElementById('singleplayerButton');
+const multiplayerButton = document.getElementById('multiplayerButton');
 
-function renderBoard() {
-  const boardContainer = document.querySelector('.board');
-  boardContainer.innerHTML = '';
-  
-  for (let row = 0; row < 6; row++) {
-    for (let col = 0; col < 7; col++) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-      if (board[row][col]) {
-        cell.classList.add(board[row][col]); // Add x or o class
-      }
-      cell.onclick = () => handleMove(col);
-      boardContainer.appendChild(cell);
+singleplayerButton.addEventListener('click', startSinglePlayerGame);
+multiplayerButton.addEventListener('click', startMultiplayerGame);
+retryButton.addEventListener('click', restartGame);
+goToTitleButton.addEventListener('click', goToTitleScreen);
+
+// Initializes the game board in the DOM
+function createBoard() {
+    board.innerHTML = '';
+    for (let row = 0; row < 6; row++) {
+        for (let col = 0; col < 7; col++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+            cell.addEventListener('click', () => handleCellClick(row, col));
+            board.appendChild(cell);
+        }
     }
-  }
 }
 
-function handleMove(col) {
-  if (gameOver) return;
+// Starts a new single-player game
+function startSinglePlayerGame() {
+    titleScreen.style.display = 'none';
+    gameScreen.style.display = 'block';
+    currentPlayer = 'X';
+    gameBoard = Array(6).fill().map(() => Array(7).fill(''));
+    gameOver = false;
+    createBoard();
+    updateGameInfo();
+}
 
-  // Find the first empty spot in the column
-  for (let row = 5; row >= 0; row--) {
-    if (!board[row][col]) {
-      board[row][col] = currentPlayer;
-      checkWinner(row, col);
-      currentPlayer = currentPlayer === 'x' ? 'o' : 'x'; // Switch player
-      break;
+// Starts a new multiplayer game
+function startMultiplayerGame() {
+    titleScreen.style.display = 'none';
+    gameScreen.style.display = 'block';
+    currentPlayer = 'X';
+    gameBoard = Array(6).fill().map(() => Array(7).fill(''));
+    gameOver = false;
+    createBoard();
+    updateGameInfo();
+}
+
+// Handles a cell click
+function handleCellClick(row, col) {
+    if (gameOver || gameBoard[row][col] !== '') return;
+
+    for (let i = 5; i >= 0; i--) {
+        if (gameBoard[i][col] === '') {
+            gameBoard[i][col] = currentPlayer;
+            updateBoard();
+            checkWinner(i, col);
+            switchPlayer();
+            break;
+        }
     }
-  }
-
-  if (gameMode === 'single' && currentPlayer === 'o' && !gameOver) {
-    aiMove();
-  }
-
-  renderBoard();
-  updateTurnStatus();
 }
 
+// Updates the game board display
+function updateBoard() {
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach(cell => {
+        const row = cell.dataset.row;
+        const col = cell.dataset.col;
+        cell.classList.remove('X', 'O');
+        if (gameBoard[row][col] === 'X') {
+            cell.classList.add('X');
+        } else if (gameBoard[row][col] === 'O') {
+            cell.classList.add('O');
+        }
+    });
+}
+
+// Switches the current player
+function switchPlayer() {
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    updateGameInfo();
+}
+
+// Updates the current player display
+function updateGameInfo() {
+    currentPlayerDisplay.textContent = `Player ${currentPlayer === 'X' ? '1 (X)' : '2 (O)'}`;
+}
+
+// Checks if the current move results in a win
 function checkWinner(row, col) {
-  if (checkDirection(row, col, 1, 0) || // Horizontal
-      checkDirection(row, col, 0, 1) || // Vertical
-      checkDirection(row, col, 1, 1) || // Diagonal \
-      checkDirection(row, col, 1, -1)) { // Diagonal /
-    gameOver = true;
-    setTimeout(() => alert(`${currentPlayer === 'x' ? 'Player 1' : 'AI'} wins!`), 100);
-  }
-}
-
-function checkDirection(row, col, rowDir, colDir) {
-  let count = 1;
-  
-  for (let i = 1; i < 4; i++) {
-    const r = row + rowDir * i;
-    const c = col + colDir * i;
-    if (r < 0 || r >= 6 || c < 0 || c >= 7 || board[r][c] !== currentPlayer) break;
-    count++;
-  }
-  
-  for (let i = 1; i < 4; i++) {
-    const r = row - rowDir * i;
-    const c = col - colDir * i;
-    if (r < 0 || r >= 6 || c < 0 || c >= 7 || board[r][c] !== currentPlayer) break;
-    count++;
-  }
-
-  return count >= 4;
-}
-
-function aiMove() {
-  if (gameOver) return;
-  
-  // AI logic to make a move (simple random move)
-  for (let col = 0; col < 7; col++) {
-    for (let row = 5; row >= 0; row--) {
-      if (!board[row][col]) {
-        board[row][col] = 'o';
-        checkWinner(row, col);
-        currentPlayer = 'x'; // Switch back to player
-        return;
-      }
+    if (checkDirection(row, col, -1, 0) + checkDirection(row, col, 1, 0) >= 3 || // Vertical
+        checkDirection(row, col, 0, -1) + checkDirection(row, col, 0, 1) >= 3 || // Horizontal
+        checkDirection(row, col, -1, -1) + checkDirection(row, col, 1, 1) >= 3 || // Diagonal \
+        checkDirection(row, col, -1, 1) + checkDirection(row, col, 1, -1) >= 3) { // Diagonal /
+        
+        gameOver = true;
+        status.textContent = `Player ${currentPlayer === 'X' ? '1 (X)' : '2 (O)'} Wins!`;
+        retryButton.style.display = 'inline-block';
+        goToTitleButton.style.display = 'inline-block';
+    } else if (gameBoard.flat().every(cell => cell !== '')) {
+        gameOver = true;
+        status.textContent = 'It\'s a Draw!';
+        retryButton.style.display = 'inline-block';
+        goToTitleButton.style.display = 'inline-block';
     }
-  }
 }
 
-function updateTurnStatus() {
-  const turnText = gameMode === 'single' ? 
-    `Turn: ${currentPlayer === 'x' ? 'Player 1' : 'AI'}` :
-    `Player ${currentPlayer === 'x' ? '1' : '2'}'s Turn`;
-  document.getElementById('turn-status').innerText = turnText;
+// Checks a specific direction (vertical, horizontal, or diagonal)
+function checkDirection(row, col, dRow, dCol) {
+    let count = 0;
+    let r = row + dRow;
+    let c = col + dCol;
+    while (r >= 0 && r < 6 && c >= 0 && c < 7 && gameBoard[r][c] === currentPlayer) {
+        count++;
+        r += dRow;
+        c += dCol;
+    }
+    return count;
 }
 
+// Restarts the game
 function restartGame() {
-  startGame(gameMode);
+    gameBoard = Array(6).fill().map(() => Array(7).fill(''));
+    gameOver = false;
+    retryButton.style.display = 'none';
+    goToTitleButton.style.display = 'none';
+    createBoard();
+    updateGameInfo();
+    status.textContent = '';
+}
+
+// Returns to the title screen
+function goToTitleScreen() {
+    gameScreen.style.display = 'none';
+    titleScreen.style.display = 'block';
 }

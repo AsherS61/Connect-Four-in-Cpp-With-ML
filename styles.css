@@ -1,64 +1,50 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
+body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  .game-container {
     text-align: center;
-  }
-  
-  button {
+    background-color: #f4f4f4;
+}
+
+.screen {
+    display: none;
+}
+
+#titleScreen {
+    display: block;
+}
+
+button {
     padding: 10px 20px;
     margin: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  #game-board {
-    margin-top: 20px;
-  }
-  
-  .board {
+}
+
+.board {
     display: grid;
-    grid-template-columns: repeat(7, 50px);
+    grid-template-columns: repeat(7, 60px);
     grid-gap: 5px;
     justify-content: center;
-  }
-  
-  .cell {
-    width: 50px;
-    height: 50px;
-    background-color: #e0e0e0;
+    margin: 20px auto;
+    max-width: 450px;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
+    border: 2px solid #000;
     cursor: pointer;
-  }
-  
-  .cell.x {
+    background-color: #fff;
+}
+
+.cell.X {
     background-color: red;
-  }
-  
-  .cell.o {
+}
+
+.cell.O {
     background-color: yellow;
-  }
-  
-  .status {
-    margin-bottom: 20px;
-  }
-  
+}
+
+.controls {
+    margin-top: 20px;
+}

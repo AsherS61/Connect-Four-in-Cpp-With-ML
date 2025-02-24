@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connect Four</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Four</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="game-container">
-    <h1>Connect Four</h1>
-    <div id="mode-selection">
-      <button onclick="startGame('single')">Single Player</button>
-      <button onclick="startGame('multi')">Multiplayer</button>
+    <div id="titleScreen" class="screen">
+        <h1>Welcome to Connect Four</h1>
+        <button id="singleplayerButton">Single Player</button>
+        <button id="multiplayerButton">Multiplayer</button>
     </div>
-    <div id="game-board" class="board-container" style="display:none;">
-      <div class="status">
-        <span id="turn-status"></span>
-        <button id="restart-btn" onclick="restartGame()" style="display:none;">Play Again</button>
-      </div>
-      <div class="board"></div>
-    </div>
-  </div>
 
-  <script src="script.js"></script>
+    <div id="gameScreen" class="screen" style="display: none;">
+        <h2>Connect Four</h2>
+        <div id="board" class="board"></div>
+        <div id="gameInfo">
+            <p>Turn: <span id="currentPlayer">Player 1 (X)</span></p>
+            <p id="status"></p>
+        </div>
+        <div id="gameControls" class="controls">
+            <button id="retryButton" style="display: none;">Retry</button>
+            <button id="goToTitleButton" style="display: none;">Go to Title</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
